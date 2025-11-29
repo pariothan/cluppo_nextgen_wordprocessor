@@ -53,6 +53,7 @@ class ClippyAssistant {
         this.disputedSuggestion = null;
         this.selectionRangeSnapshot = null;
         this.selectionLineIndex = null;
+        this.sessionId = null;
         this.state = {
             mood: 'neutral',
             memories: [],
@@ -124,6 +125,7 @@ class ClippyAssistant {
         this.offlineBanner = document.getElementById('clippyOfflineBanner');
         this.offlineDismiss = document.getElementById('offlineBannerDismiss');
         this.persistMemoryToggle = document.getElementById('clippyPersistMemoryToggle');
+        this.sessionId = this.getSessionKey();
         this.loadState();
         this.loadVoices();
 
@@ -374,6 +376,7 @@ class ClippyAssistant {
             'Respond playfully in under 40 words.',
             'Always propose line-level edits. Return JSON on its own line shaped as { "type": "line", "lineNumber": <0-based>, "newLine": "<entire replacement line>", "rationale": "<brief why>" }. Always include the full new line text to swap in.',
             'You may ONLY edit the active line. Do not change any other lines.',
+            'Stay on the same topic as the active line. Do not invent new stories or unrelated scenarios. Keep similar length and format.',
             `Active line (${lineContext.lineIndex !== null ? lineContext.lineIndex : 'unknown'}): ${targetLine}`,
             `Context (read-only):\n${contextWindow}`,
             this.emotionInstruction
@@ -381,6 +384,7 @@ class ClippyAssistant {
             'You are Cluppo. Respond playfully in under 40 words.',
             'Always propose line-level edits. Return JSON on its own line shaped as { "type": "line", "lineNumber": <0-based>, "newLine": "<entire replacement line>", "rationale": "<brief why>" }. Always include the full new line text to swap in.',
             'You may ONLY edit the active line. Do not change any other lines.',
+            'Stay on the same topic as the active line. Do not invent new stories or unrelated scenarios. Keep similar length and format.',
             `Active line (${lineContext.lineIndex !== null ? lineContext.lineIndex : 'unknown'}): ${targetLine}`,
             `Context (read-only):\n${contextWindow}`,
             this.emotionInstruction
@@ -719,6 +723,7 @@ class ClippyAssistant {
     setDocumentContext(name = 'Untitled Document') {
         this.saveState();
         this.documentId = name || 'Untitled Document';
+        this.sessionId = this.getSessionKey();
         this.loadState();
     }
 
@@ -1201,6 +1206,7 @@ class ClippyAssistant {
             'If you include a suggestion, put the JSON on its own line. If not, just reply without JSON.',
             'Stay under 50 words for text replies.',
             'You may ONLY edit the active line. Do not change any other lines.',
+            'Stay on the same topic as the active line. Do not invent new stories or unrelated scenarios. Keep similar length and format.',
             `Active line (${lineContext.lineIndex !== null ? lineContext.lineIndex : 'unknown'}): ${targetLine}`,
             `Context (read-only):\n${contextWindow}`,
             this.emotionInstruction
@@ -1209,6 +1215,7 @@ class ClippyAssistant {
             'If you include a suggestion, put the JSON on its own line. If not, just reply without JSON.',
             'Stay under 50 words for text replies.',
             'You may ONLY edit the active line. Do not change any other lines.',
+            'Stay on the same topic as the active line. Do not invent new stories or unrelated scenarios. Keep similar length and format.',
             `Active line (${lineContext.lineIndex !== null ? lineContext.lineIndex : 'unknown'}): ${targetLine}`,
             `Context (read-only):\n${contextWindow}`,
             this.emotionInstruction
@@ -1253,6 +1260,7 @@ class ClippyAssistant {
             'Suggest a line-level edit. Return JSON on its own line: { "type": "line", "lineNumber": <0-based>, "newLine": "<entire replacement line>", "rationale": "<brief why>" }.',
             'Keep suggestion under 50 words. Use the active line if meaningful.',
             'You may ONLY edit the active line. Do not change any other lines.',
+            'Stay on the same topic as the active line. Do not invent new stories or unrelated scenarios. Keep similar length and format.',
             `Active line (${lineContext.lineIndex !== null ? lineContext.lineIndex : 'unknown'}): ${targetLine}`,
             `Context (read-only):\n${contextWindow}`,
             this.emotionInstruction
@@ -1260,6 +1268,7 @@ class ClippyAssistant {
             'You are Cluppo. Suggest a line-level edit. Return JSON on its own line: { "type": "line", "lineNumber": <0-based>, "newLine": "<entire replacement line>", "rationale": "<brief why>" }.',
             'Keep suggestion under 50 words. Use the active line if meaningful.',
             'You may ONLY edit the active line. Do not change any other lines.',
+            'Stay on the same topic as the active line. Do not invent new stories or unrelated scenarios. Keep similar length and format.',
             `Active line (${lineContext.lineIndex !== null ? lineContext.lineIndex : 'unknown'}): ${targetLine}`,
             `Context (read-only):\n${contextWindow}`,
             this.emotionInstruction
@@ -1693,7 +1702,9 @@ class ClippyAssistant {
                     content: [
                         `Active line (${lineContext.lineIndex !== null ? lineContext.lineIndex : 'unknown'}): ${targetLine}`,
                         `Context (read-only):\n${contextWindow}`
-                    ].join('\n')
+                    ].join('\n'),
+                    sessionId: this.sessionId || this.getSessionKey(),
+                    lineNumber: lineContext.lineIndex
                 })
             });
 
