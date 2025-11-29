@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cluppo Harness</title>
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        body {
+            background: #101820;
+            color: #ffeecf;
+            font-family: "Courier New", monospace;
+        }
+        .harness {
+            max-width: 960px;
+            margin: 40px auto;
+            background: linear-gradient(135deg, #1f2937, #111827);
+            border: 3px solid #ff9a36;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            padding: 16px;
+        }
+        .harness h1 {
+            margin: 0 0 10px 0;
+            color: #ffd37a;
+            letter-spacing: 1px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        textarea, select {
+            width: 100%;
+            padding: 8px;
+            font-family: "Courier New", monospace;
+            background: #0d1117;
+            color: #f5f2d0;
+            border: 2px solid #ff9a36;
+        }
+        button {
+            background: linear-gradient(180deg, #ffd37a, #ff9a36);
+            border: 2px solid #ff7b00;
+            color: #3b1b00;
+            font-weight: 800;
+            padding: 10px 14px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .panel {
+            background: #0b0f16;
+            border: 2px solid #ff7b00;
+            padding: 10px;
+        }
+        pre {
+            background: #0b0f16;
+            color: #93f5ff;
+            padding: 10px;
+            overflow: auto;
+            min-height: 160px;
+        }
+        .badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+        .badge {
+            background: #ff7b00;
+            color: #0b0f16;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="harness">
+        <h1>Cluppo Prompt Harness</h1>
+        <div class="badges">
+            <span class="badge">Canned prompts</span>
+            <span class="badge">AI proxy</span>
+            <span class="badge">Suggestion & mood parser</span>
+        </div>
+        <div class="grid">
+            <div>
+                <label for="cannedPrompt">Pick a canned prompt</label>
+                <select id="cannedPrompt">
+                    <option value="suggest">Suggest something awful</option>
+                    <option value="hostile">Hostile rebuttal</option>
+                    <option value="wordy">Overly long brag</option>
+                </select>
+            </div>
+            <div>
+                <label for="customPrompt">Custom user text</label>
+                <textarea id="customPrompt" rows="3" placeholder="Optional: override the canned text..."></textarea>
+            </div>
+        </div>
+        <div style="margin: 12px 0; display:flex; gap:12px;">
+            <button id="sendPrompt">Send Prompt</button>
+            <button id="parseOnly">Parse Text Only</button>
+        </div>
+        <div class="grid">
+            <div class="panel">
+                <strong>Raw Response</strong>
+                <pre id="rawResponse">Waiting for Cluppo...</pre>
+            </div>
+            <div class="panel">
+                <strong>Parsed JSON</strong>
+                <pre id="parsedJson">{}</pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/cluppo-config.js"></script>
+    <script>
+        const cannedMap = {
+            suggest: 'Give me a hilariously bad edit for this doc and brag about it.',
+            hostile: 'The user says you are useless. Snap back and include a JSON suggestion.',
+            wordy: 'Write something pompous about why you should lead this document.'
+        };
+
+        function extractJsonBlocks(text) {
+            const blocks = [];
+            const fenceRegex = /```json([\\s\\S]*?)```/gi;
+            let match;
+            while ((match = fenceRegex.exec(text)) !== null) {
+                const raw = match[0];
+                try {
+                    blocks.push({ raw, parsed: JSON.parse(match[1]) });
+                } catch (e) {
+                    // ignore
+                }
+            }
+            if (blocks.length === 0) {
+                const braceMatch = text.match(/\\{[\\s\\S]*\\}/);
+                if (braceMatch) {
+                    try {
+                        blocks.push({ raw: braceMatch[0], parsed: JSON.parse(braceMatch[0]) });
+                    } catch (e) {
+                        // ignore
+                    }
+                }
+            }
+            return blocks;
+        }
+
+        function parseSimpleSuggestion(text) {
+            if (!text) return null;
+            const lower = text.toLowerCase();
+            const replaceMatch = lower.match(/replace\\s+["']?([^"']+?)["']?\\s+with\\s+["']?([^"']+?)["']?/);
+            if (replaceMatch) {
+                return { type: 'replace', target: replaceMatch[1].trim(), suggestion: replaceMatch[2].trim(), rationale: 'Heuristic guess' };
+            }
+            const deleteMatch = lower.match(/(delete|remove|drop)\\s+["']?([^"']+?)["']?/);
+            if (deleteMatch) {
+                return { type: 'delete', target: deleteMatch[2].trim(), suggestion: '', rationale: 'Heuristic guess' };
+            }
+            const addMatch = lower.match(/(add|insert|include)\\s+["']?([^"']+?)["']?/);
+            if (addMatch) {
+                return { type: 'add', target: '', suggestion: addMatch[2].trim(), rationale: 'Heuristic guess' };
+            }
+            return null;
+        }
+
+        function extractSuggestion(text) {
+            if (!text) return { suggestion: null, remainder: text, mood: null };
+            const blocks = extractJsonBlocks(text);
+            let suggestion = null;
+            let mood = null;
+            let cleaned = text;
+            blocks.forEach(({ raw, parsed }) => {
+                if (!parsed || typeof parsed !== 'object') return;
+                if (!suggestion && parsed.type && (parsed.suggestion !== undefined || parsed.rationale !== undefined)) {
+                    suggestion = parsed;
+                    cleaned = cleaned.replace(raw, '').trim();
+                } else if (!mood && parsed.mood) {
+                    mood = parsed;
+                    cleaned = cleaned.replace(raw, '').trim();
+                }
+            });
+            if (!suggestion) {
+                const heuristic = parseSimpleSuggestion(text);
+                if (heuristic) {
+                    suggestion = heuristic;
+                    cleaned = text.replace(/replace|delete|remove|drop|add|insert|include/i, '').trim();
+                }
+            }
+            return { suggestion, remainder: cleaned, mood };
+        }
+
+        async function sendPrompt() {
+            const canned = cannedMap[document.getElementById('cannedPrompt').value] || '';
+            const custom = document.getElementById('customPrompt').value.trim();
+            const userText = custom || canned;
+            const prompt = window.CluppoConfig.buildPrompt([
+                'Reply in under 70 words. Include suggestion JSON if you have a concrete change.',
+                `User text: ${userText}`,
+                'Pretend document: A short angry memo about staplers.',
+                'Append mood JSON if possible: { "mood": "...", "reason": "...", "opinion": "..." }'
+            ], { hostility: 1.2, sabotage: 1.1 });
+
+            const res = await fetch('/api/ai', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt, intent: 'harness', selection: '', content: userText })
+            });
+            const data = await res.json();
+            const text = data.text || data.message || JSON.stringify(data);
+            render(text);
+        }
+
+        function render(text) {
+            document.getElementById('rawResponse').textContent = text;
+            const parsed = extractSuggestion(text);
+            document.getElementById('parsedJson').textContent = JSON.stringify(parsed, null, 2);
+        }
+
+        document.getElementById('sendPrompt').addEventListener('click', () => {
+            sendPrompt().catch((err) => render('Error: ' + err.message));
+        });
+        document.getElementById('parseOnly').addEventListener('click', () => {
+            const text = document.getElementById('customPrompt').value.trim();
+            render(text || 'Nothing to parse.');
+        });
+    </script>
+</body>
+</html>

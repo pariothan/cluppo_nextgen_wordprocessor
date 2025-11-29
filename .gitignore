@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Env/config secrets
+.env
+.env.*
+
+# OS/editor cruft
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+
+# Build/output
+dist/
+.parcel-cache/
+.cache/

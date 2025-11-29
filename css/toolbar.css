@@ -1,0 +1,297 @@
+/* Clean Minimal Toolbar */
+
+/* Toolbar Container */
+.toolbar {
+    background: #fafafa;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 10px 12px 8px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.toolbar-group {
+    position: relative;
+    padding-top: 10px;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 4px 6px 4px 6px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+
+.toolbar-group[data-label]::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -6px;
+    left: 6px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: #9aa0aa;
+    text-transform: uppercase;
+}
+
+.toolbar-group:hover {
+    background: #f5f5f7;
+    box-shadow: inset 0 0 0 1px #e6e6e6;
+}
+
+.toolbar-divider {
+    width: 1px;
+    height: 24px;
+    background: #e8e8e8;
+    margin: 0 4px;
+}
+
+/* Clean Toolbar Buttons */
+.toolbar-btn {
+    background: transparent;
+    border: none;
+    padding: 6px 8px;
+    font-size: 13px;
+    font-weight: 400;
+    color: #666;
+    cursor: pointer;
+    min-width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.15s;
+    position: relative;
+}
+
+.toolbar-btn:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.toolbar-btn:active {
+    transform: scale(0.95);
+}
+
+.toolbar-btn#askCluppo {
+    font-size: 15px;
+}
+
+/* Active state - simple */
+.toolbar-btn.active {
+    background: #e8e8e8;
+    color: #000;
+}
+
+.toolbar-btn b,
+.toolbar-btn i,
+.toolbar-btn u,
+.toolbar-btn s {
+    font-size: 14px;
+    pointer-events: none;
+}
+
+/* Clean Select Dropdowns */
+.toolbar-select {
+    background: transparent;
+    border: 1px solid #ddd;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 400;
+    color: #666;
+    cursor: pointer;
+    outline: none;
+    height: 28px;
+    border-radius: 4px;
+    transition: all 0.15s;
+}
+
+.toolbar-select:hover {
+    border-color: #999;
+    background: #fafafa;
+}
+
+.toolbar-select:focus {
+    outline: none;
+    border-color: #666;
+}
+
+.toolbar-select:active {
+    background: #f5f5f5;
+}
+
+#fontFamily {
+    min-width: 120px;
+}
+
+#fontSize {
+    min-width: 60px;
+}
+
+#formatBlock {
+    min-width: 100px;
+}
+
+/* Clean Color Picker */
+.color-picker-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.15s;
+}
+
+.color-picker-wrapper:hover {
+    background: #f0f0f0;
+}
+
+.color-picker-wrapper:active {
+    transform: scale(0.95);
+}
+
+.color-label {
+    font-weight: 400;
+    font-size: 13px;
+    color: #666;
+    pointer-events: none;
+    position: absolute;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
+.highlight-icon {
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.95) 55%, #ffeb3b 55%, #ffeb3b 100%);
+    padding: 2px 5px;
+    border-radius: 2px;
+}
+
+.color-picker-wrapper input[type="color"] {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    border: none;
+}
+
+/* Alignment Button Special Styling */
+#alignLeft {
+    text-align: left;
+    padding-left: 6px;
+    font-size: 16px;
+}
+
+#alignCenter {
+    text-align: center;
+    font-size: 16px;
+}
+
+#alignRight {
+    text-align: right;
+    padding-right: 6px;
+    font-size: 16px;
+}
+
+#alignJustify {
+    letter-spacing: 1px;
+    font-size: 16px;
+}
+
+/* List Buttons */
+#orderedList,
+#unorderedList {
+    font-size: 10px;
+    padding: 5px 6px;
+    font-weight: bold;
+}
+
+/* Indent Buttons */
+#indent,
+#outdent {
+    font-size: 14px;
+}
+
+/* Undo/Redo with Special Arrows */
+#undo,
+#redo {
+    font-size: 16px;
+    font-weight: normal;
+}
+
+/* Remove all glow effects */
+
+/* Responsive Toolbar */
+@media (max-width: 768px) {
+    .toolbar {
+        padding: 4px 6px;
+        gap: 6px;
+    }
+
+    .toolbar-group {
+        padding: 3px;
+        gap: 3px;
+    }
+
+    .toolbar-btn {
+        padding: 4px 8px;
+        min-width: 28px;
+        height: 24px;
+        font-size: 12px;
+    }
+
+    .toolbar-select {
+        font-size: 10px;
+        padding: 3px 5px;
+        height: 24px;
+    }
+
+    #fontFamily {
+        min-width: 90px;
+    }
+
+    #fontSize {
+        min-width: 50px;
+    }
+
+    #formatBlock {
+        min-width: 80px;
+    }
+
+    .toolbar-divider {
+        height: 24px;
+        margin: 0 1px;
+    }
+
+    .color-picker-wrapper {
+        width: 28px;
+        height: 24px;
+    }
+}
+
+/* Extra small screens - hide dividers */
+@media (max-width: 480px) {
+    .toolbar-divider {
+        display: none;
+    }
+
+    .toolbar {
+        gap: 4px;
+    }
+
+    .toolbar-group {
+        gap: 2px;
+        padding: 2px;
+    }
+}

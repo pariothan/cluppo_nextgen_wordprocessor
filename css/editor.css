@@ -1,0 +1,373 @@
+/* Y2K Editor Styles - Retro Document Area */
+
+/* Editor Container with 3D Sunken Effect */
+.editor-container {
+    flex: 1;
+    overflow-y: auto;
+    background: linear-gradient(180deg, #dfe5ff 0%, #f3f5ff 40%, #e7ecff 100%);
+    padding: 12px;
+    border-top: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+/* Scrollbar Styling (Webkit browsers) */
+.editor-container::-webkit-scrollbar {
+    width: 16px;
+    background: #c0c0c0;
+}
+
+.editor-container::-webkit-scrollbar-track {
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+}
+
+.editor-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(to right, #dfdfdf, #c0c0c0);
+    border: 2px solid;
+    border-color: #fff #000 #000 #fff;
+    box-shadow: inset 1px 1px 0 #fff;
+}
+
+.editor-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to right, #e8e8e8, #d0d0d0);
+}
+
+.editor-container::-webkit-scrollbar-thumb:active {
+    border-color: #000 #fff #fff #000;
+    background: #c0c0c0;
+}
+
+.editor-container::-webkit-scrollbar-button {
+    height: 16px;
+    background: linear-gradient(to bottom, #dfdfdf, #c0c0c0);
+    border: 2px solid;
+    border-color: #fff #000 #000 #fff;
+}
+
+.editor-container::-webkit-scrollbar-button:active {
+    border-color: #000 #fff #fff #000;
+    background: #b0b0b0;
+}
+
+/* Document Paper with Shadow */
+.editor {
+    background: #fff;
+    min-height: calc(11in - 2in);
+    width: 100%;
+    max-width: 8.5in;
+    margin: 0 auto;
+    padding: 1.1in;
+    outline: none;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 13pt;
+    line-height: 1.8;
+    letter-spacing: 0.01em;
+    text-rendering: optimizeLegibility;
+    color: #000;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    box-shadow:
+        inset -1px -1px 0 #dfdfdf,
+        inset 1px 1px 0 #000,
+        4px 4px 8px rgba(0, 0, 0, 0.3),
+        8px 8px 16px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+/* Subtle paper texture */
+.editor::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: none;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.editor:focus {
+    box-shadow:
+        inset -1px -1px 0 #dfdfdf,
+        inset 1px 1px 0 #000,
+        4px 4px 8px rgba(0, 0, 0, 0.3),
+        8px 8px 16px rgba(0, 0, 0, 0.1),
+        0 0 0 2px #000080,
+        0 0 10px rgba(0, 0, 128, 0.5);
+}
+
+/* Default paragraph spacing */
+.editor p {
+    margin: 0 0 14pt 0;
+}
+
+/* Headings with Y2K flair */
+.editor h1 {
+    font-size: 24pt;
+    font-weight: bold;
+    margin: 18pt 0 12pt 0;
+    line-height: 1.3;
+    color: #000080;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.editor h2 {
+    font-size: 20pt;
+    font-weight: bold;
+    margin: 16pt 0 10pt 0;
+    line-height: 1.3;
+    color: #000080;
+}
+
+.editor h3 {
+    font-size: 16pt;
+    font-weight: bold;
+    margin: 14pt 0 8pt 0;
+    line-height: 1.3;
+    color: #191970;
+}
+
+.editor h4 {
+    font-size: 14pt;
+    font-weight: bold;
+    margin: 12pt 0 6pt 0;
+    line-height: 1.3;
+    color: #191970;
+}
+
+.editor h5 {
+    font-size: 12pt;
+    font-weight: bold;
+    margin: 10pt 0 6pt 0;
+    line-height: 1.3;
+    color: #000;
+}
+
+.editor h6 {
+    font-size: 11pt;
+    font-weight: bold;
+    margin: 8pt 0 4pt 0;
+    line-height: 1.3;
+    color: #000;
+}
+
+/* Lists with retro styling */
+.editor ul,
+.editor ol {
+    margin: 0 0 12pt 0;
+    padding-left: 40px;
+}
+
+.editor li {
+    margin-bottom: 6pt;
+}
+
+.editor ul li::marker {
+    color: #000080;
+}
+
+.editor ol li::marker {
+    color: #000080;
+    font-weight: bold;
+}
+
+/* Text alignment */
+.editor [style*="text-align: left"] {
+    text-align: left;
+}
+
+.editor [style*="text-align: center"] {
+    text-align: center;
+}
+
+.editor [style*="text-align: right"] {
+    text-align: right;
+}
+
+.editor [style*="text-align: justify"] {
+    text-align: justify;
+}
+
+/* Indentation with 3D effect */
+.editor blockquote {
+    margin: 0 0 12pt 40px;
+    padding: 8px 12px;
+    border-left: 4px solid;
+    border-color: #808080 #fff #fff #808080;
+    background: #f0f0f0;
+    box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Selection styling with Y2K blue */
+.editor::selection,
+.editor *::selection {
+    background-color: #000080;
+    color: #fff;
+}
+
+/* Links with retro styling */
+.editor a {
+    color: #0000ee;
+    text-decoration: underline;
+}
+
+.editor a:visited {
+    color: #551a8b;
+}
+
+.editor a:hover {
+    color: #0000ff;
+    text-decoration: underline;
+    background: rgba(0, 0, 255, 0.1);
+}
+
+/* Images with border */
+.editor img {
+    max-width: 100%;
+    height: auto;
+    margin: 12pt 0;
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Tables with 3D borders */
+.editor table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    margin: 12pt 0;
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+}
+
+.editor table td,
+.editor table th {
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    padding: 6px 10px;
+    background: #f0f0f0;
+}
+
+.editor table th {
+    background: linear-gradient(to bottom, #dfdfdf, #c0c0c0);
+    font-weight: bold;
+    text-align: left;
+}
+
+/* Code blocks with terminal styling */
+.editor code {
+    background: #000;
+    color: #00ff00;
+    padding: 2px 6px;
+    border: 1px solid #808080;
+    font-family: 'Courier New', 'Consolas', monospace;
+    font-size: 11pt;
+}
+
+.editor pre {
+    background: #000;
+    color: #00ff00;
+    padding: 12px;
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    overflow-x: auto;
+    margin: 12pt 0;
+    font-family: 'Courier New', 'Consolas', monospace;
+    box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.editor pre code {
+    background: transparent;
+    padding: 0;
+    border: none;
+}
+
+/* Horizontal rule with 3D effect */
+.editor hr {
+    border: none;
+    height: 2px;
+    background: #808080;
+    margin: 20pt 0;
+    box-shadow: 0 1px 0 #fff;
+}
+
+/* Empty editor placeholder with retro style */
+.editor:empty::before {
+    content: 'Start typing your document here...';
+    color: #808080;
+    font-style: italic;
+}
+
+/* Blinking cursor effect (subtle) */
+@keyframes blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+}
+
+.editor:focus::after {
+    animation: blink 1s infinite;
+}
+
+/* Responsive Editor */
+@media (max-width: 768px) {
+    .editor-container {
+        padding: 8px;
+    }
+
+    .editor {
+        max-width: 100%;
+        padding: 0.5in;
+        min-height: auto;
+    }
+}
+
+/* Tablet view */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .editor {
+        max-width: 7.5in;
+    }
+}
+
+/* Print-specific editor styles */
+@media print {
+    .editor-container {
+        padding: 0;
+        background: white;
+        border: none;
+        box-shadow: none;
+    }
+
+    .editor {
+        box-shadow: none;
+        border: none;
+        max-width: 100%;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    .editor::before {
+        display: none;
+    }
+}
+
+/* Custom scrollbar for editor content on webkit */
+.editor::-webkit-scrollbar {
+    width: 12px;
+}
+
+.editor::-webkit-scrollbar-track {
+    background: #f0f0f0;
+}
+
+.editor::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+    border: 1px solid #808080;
+}

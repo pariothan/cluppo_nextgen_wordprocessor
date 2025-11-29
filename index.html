@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Powered Word Processing for Maximum Productivity</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/toolbar.css">
+    <link rel="stylesheet" href="css/editor.css">
+</head>
+<body>
+    <div id="clippyOfflineBanner" class="offline-banner hidden" role="status" aria-live="polite">
+        <div class="offline-banner__text">Cluppo lost connection. Falling back to his home-brewed sabotage generator.</div>
+        <button id="offlineBannerDismiss" class="offline-banner__close" type="button" aria-label="Dismiss offline warning">×</button>
+    </div>
+    <div class="y2k-background"></div>
+    <div class="window-frame">
+        <div class="container">
+            <!-- Title Bar -->
+            <div class="title-bar">
+                <div class="title-bar-text">
+                    <span class="title-icon">📝</span>
+                    AI Powered Word Processing for Maximum Productivity
+                </div>
+                <div class="title-bar-controls">
+                    <button class="title-btn" id="maximizeBtn" aria-label="Maximize">□</button>
+                </div>
+            </div>
+
+            <!-- Menu Bar -->
+            <div class="menu-bar">
+                <div class="menu-item" id="fileMenu">File</div>
+                <div class="menu-item" id="editMenu">Edit</div>
+                <div class="menu-item">View</div>
+                <div class="menu-item">Help</div>
+
+                <!-- File Dropdown Menu -->
+                <div id="fileDropdown" class="menu-dropdown">
+                    <button id="newDoc" class="menu-dropdown-item">New</button>
+                    <button id="saveDoc" class="menu-dropdown-item">Save</button>
+                    <button id="loadDoc" class="menu-dropdown-item">Open...</button>
+                    <div class="menu-separator"></div>
+                    <button id="exportHtml" class="menu-dropdown-item">Export as HTML</button>
+                    <button id="exportTxt" class="menu-dropdown-item">Export as TXT</button>
+                    <button id="exportPdf" class="menu-dropdown-item">Export as PDF</button>
+                    <div class="menu-separator"></div>
+                    <button id="printDoc" class="menu-dropdown-item">Print</button>
+                </div>
+
+                <!-- Edit Dropdown Menu -->
+                <div id="editDropdown" class="menu-dropdown">
+                    <button id="menuUndo" class="menu-dropdown-item">Undo<span class="menu-shortcut">Ctrl+Z</span></button>
+                    <button id="menuRedo" class="menu-dropdown-item">Redo<span class="menu-shortcut">Ctrl+Y</span></button>
+                    <div class="menu-separator"></div>
+                    <button id="menuCut" class="menu-dropdown-item">Cut<span class="menu-shortcut">Ctrl+X</span></button>
+                    <button id="menuCopy" class="menu-dropdown-item">Copy<span class="menu-shortcut">Ctrl+C</span></button>
+                    <button id="menuPaste" class="menu-dropdown-item">Paste<span class="menu-shortcut">Ctrl+V</span></button>
+                    <div class="menu-separator"></div>
+                    <button id="menuSelectAll" class="menu-dropdown-item">Select All<span class="menu-shortcut">Ctrl+A</span></button>
+                    <div class="menu-separator"></div>
+                    <button id="menuFind" class="menu-dropdown-item">Find...<span class="menu-shortcut">Ctrl+F</span></button>
+                    <button id="menuReplace" class="menu-dropdown-item">Find and Replace...<span class="menu-shortcut">Ctrl+H</span></button>
+                </div>
+            </div>
+
+            <!-- Find and Replace Dialog -->
+            <div id="findReplaceDialog" class="dialog-overlay hidden">
+                <div class="dialog-window">
+                    <div class="dialog-title-bar">
+                        <span>Find and Replace</span>
+                        <button class="dialog-close" id="closeFindReplace">×</button>
+                    </div>
+                    <div class="dialog-content">
+                        <div class="dialog-field">
+                            <label>Find:</label>
+                            <input type="text" id="findInput" class="dialog-input">
+                        </div>
+                        <div class="dialog-field">
+                            <label>Replace:</label>
+                            <input type="text" id="replaceInput" class="dialog-input">
+                        </div>
+                        <div class="dialog-options">
+                            <label>
+                                <input type="checkbox" id="caseSensitive">
+                                Match case
+                            </label>
+                        </div>
+                        <div class="dialog-buttons">
+                            <button id="findNextBtn" class="dialog-btn">Find Next</button>
+                            <button id="replaceBtn" class="dialog-btn">Replace</button>
+                            <button id="replaceAllBtn" class="dialog-btn">Replace All</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <!-- Font Controls -->
+            <div class="toolbar-group" data-label="Fonts">
+                <select id="fontFamily" class="toolbar-select" title="Font Family">
+                    <option value="Arial">Arial</option>
+                    <option value="Georgia">Georgia</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Courier New">Courier New</option>
+                    <option value="Verdana">Verdana</option>
+                    <option value="Helvetica">Helvetica</option>
+                    <option value="Comic Sans MS">Comic Sans MS</option>
+                </select>
+                <select id="fontSize" class="toolbar-select" title="Font Size">
+                    <option value="1">8pt</option>
+                    <option value="2">10pt</option>
+                    <option value="3" selected>12pt</option>
+                    <option value="4">14pt</option>
+                    <option value="5">18pt</option>
+                    <option value="6">24pt</option>
+                    <option value="7">36pt</option>
+                </select>
+            </div>
+
+            <div class="toolbar-divider"></div>
+
+            <!-- Text Formatting -->
+            <div class="toolbar-group" data-label="Format">
+                <button id="bold" class="toolbar-btn" title="Bold (Ctrl+B)"><b>B</b></button>
+                <button id="italic" class="toolbar-btn" title="Italic (Ctrl+I)"><i>I</i></button>
+                <button id="underline" class="toolbar-btn" title="Underline (Ctrl+U)"><u>U</u></button>
+                <button id="strikethrough" class="toolbar-btn" title="Strikethrough"><s>S</s></button>
+            </div>
+
+            <div class="toolbar-divider"></div>
+
+            <!-- Colors -->
+            <div class="toolbar-group" data-label="Colors">
+                <label class="color-picker-wrapper" title="Text Color">
+                    <span class="color-label">A</span>
+                    <input type="color" id="textColor" value="#000000">
+                </label>
+                <label class="color-picker-wrapper" title="Highlight Color">
+                    <span class="color-label highlight-icon">H</span>
+                    <input type="color" id="highlightColor" value="#ffff00">
+                </label>
+            </div>
+
+            <div class="toolbar-divider"></div>
+
+            <!-- Alignment -->
+            <div class="toolbar-group" data-label="Align">
+                <button id="alignLeft" class="toolbar-btn" title="Align Left">≡</button>
+                <button id="alignCenter" class="toolbar-btn" title="Align Center">≡</button>
+                <button id="alignRight" class="toolbar-btn" title="Align Right">≡</button>
+                <button id="alignJustify" class="toolbar-btn" title="Justify">≡</button>
+            </div>
+
+            <div class="toolbar-divider"></div>
+
+            <!-- Lists and Indentation -->
+            <div class="toolbar-group" data-label="Lists/Indent">
+                <button id="orderedList" class="toolbar-btn" title="Numbered List">1. 2. 3.</button>
+                <button id="unorderedList" class="toolbar-btn" title="Bullet List">• • •</button>
+                <button id="indent" class="toolbar-btn" title="Increase Indent">→|</button>
+                <button id="outdent" class="toolbar-btn" title="Decrease Indent">|←</button>
+            </div>
+
+            <div class="toolbar-divider"></div>
+
+            <!-- Headings -->
+            <div class="toolbar-group" data-label="Style">
+                <select id="formatBlock" class="toolbar-select" title="Paragraph Style">
+                    <option value="p">Normal</option>
+                    <option value="h1">Heading 1</option>
+                    <option value="h2">Heading 2</option>
+                    <option value="h3">Heading 3</option>
+                    <option value="h4">Heading 4</option>
+                    <option value="h5">Heading 5</option>
+                    <option value="h6">Heading 6</option>
+                </select>
+            </div>
+
+            <div class="toolbar-divider"></div>
+
+            <!-- Undo/Redo -->
+            <div class="toolbar-group" data-label="History">
+                <button id="undo" class="toolbar-btn" title="Undo (Ctrl+Z)">↶</button>
+                <button id="redo" class="toolbar-btn" title="Redo (Ctrl+Y)">↷</button>
+            </div>
+
+            <div class="toolbar-divider"></div>
+
+            <!-- Cluppo -->
+            <div class="toolbar-group" data-label="Cluppo">
+                <button id="askCluppo" class="toolbar-btn" title="Summon the helpful robot">🤖</button>
+            </div>
+        </div>
+
+        <!-- Editor Area -->
+        <div class="editor-container">
+            <!-- Text highlight overlay -->
+            <div id="clippyHighlight" class="clippy-highlight hidden"></div>
+            <div id="editor" class="editor" contenteditable="true" spellcheck="true">
+                <p>Start typing your document here...</p>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <footer class="status-bar">
+            <div class="status-panel">
+                <span id="wordCount">Words: 0</span>
+            </div>
+            <div class="status-panel">
+                <span id="charCount">Characters: 0</span>
+            </div>
+            <div class="status-panel status-panel-flex">
+                <button id="renameDoc" class="status-btn" type="button" aria-label="Rename document">Rename</button>
+                <span id="documentName" class="status-doc-name">Untitled Document</span>
+            </div>
+            <div class="status-panel status-time">
+                <span id="saveStatus">No saves yet</span>
+            </div>
+            <div class="status-panel status-grip">
+                <span class="grip-lines"></span>
+            </div>
+        </footer>
+
+        <!-- Y2K Branding -->
+        <div class="y2k-badge">
+            <span class="badge-text">Powered by Y2K Technology™</span>
+        </div>
+    </div>
+    </div>
+
+        <!-- Cluppo Assistant -->
+    <div id="clippyAssistant" class="clippy-container hidden" aria-label="Cluppo the office assistant">
+            <div class="clippy-window">
+                <div class="clippy-title-bar">
+                    <span>📎 Cluppo (Office Assistant)</span>
+                    <button class="clippy-close" id="closeClippy">×</button>
+                </div>
+            <div class="clippy-content">
+                <div class="clippy-character">
+                    <div class="clippy-body">📎</div>
+                    <div class="clippy-eyes">
+                        <div class="clippy-eye left-eye">
+                            <div class="eye-pupil"></div>
+                            </div>
+                            <div class="clippy-eye right-eye">
+                                <div class="eye-pupil"></div>
+                            </div>
+                        </div>
+                        <div class="clippy-escalation-chip" id="clippyEscalationChip" aria-label="Cluppo escalation level">Lvl 0</div>
+                        <div class="clippy-nameplate" aria-hidden="true">
+                            <span class="clippy-name">Cluppo</span>
+                            <span class="clippy-role">Office Assistant</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="clippy-speech-bubble">
+                    <p id="clippyMessage">Hi, I'm Cluppo. I see you're writing a document!</p>
+                    <div class="clippy-loading" id="clippyLoading">Cluppo is typing<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
+                    <div class="clippy-suggestion-inline hidden" id="clippySuggestionInline">
+                        <div class="clippy-suggestion-inline-body" id="clippySuggestionInlineBody"></div>
+                        <div class="clippy-suggestion-inline-actions">
+                            <button class="clippy-btn" id="clippySuggestionApprove">Approve</button>
+                            <button class="clippy-btn" id="clippySuggestionDeny">Deny</button>
+                            <button class="clippy-btn" id="clippySuggestionReply" title="Dispute (Ctrl/Cmd+Shift+D)">Dispute</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clippy-actions">
+                <button class="clippy-btn" id="clippyOk">OK</button>
+                <button class="clippy-btn" id="clippySuggest" title="Ask Cluppo (Ctrl/Cmd+Shift+L)">Suggest edit</button>
+                <button class="clippy-btn" id="clippyReply">Reply</button>
+                <button class="clippy-btn" id="clippyTranscriptToggle" aria-expanded="false">Transcript</button>
+            </div>
+            <div class="clippy-meter" id="clippySabotageMeter" aria-label="Cluppo sabotage meter">
+                <div class="clippy-meter__label">Sabotage Meter</div>
+                <div class="clippy-meter__bar">
+                    <div class="clippy-meter__fill" id="clippySabotageFill"></div>
+                </div>
+            </div>
+            <div class="clippy-reply-panel hidden" id="clippyReplyPanel" aria-label="Reply to Cluppo">
+                <div class="clippy-reply-header">Send a comeback to Cluppo</div>
+                <textarea id="clippyReplyInput" class="clippy-reply-input" rows="2" placeholder="Type your reply and I'll riff back..."></textarea>
+                <div class="clippy-reply-actions">
+                    <button class="clippy-btn" id="clippySendReply">Send</button>
+                    <button class="clippy-btn" id="clippyCancelReply">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Dramatic Cluppo Reveal Overlay -->
+    <div id="cluppoReveal" class="cluppo-reveal hidden" aria-hidden="true">
+        <div class="cluppo-reveal__beam"></div>
+        <div class="cluppo-reveal__content">
+            <div class="cluppo-reveal__pre">SYSTEM UPDATE...</div>
+            <div class="cluppo-reveal__name">INTRODUCING: CLUPPO</div>
+            <div class="cluppo-reveal__icon">
+                <div class="cluppo-eyes">
+                    <span class="cluppo-eye cluppo-eye--left"><span class="cluppo-pupil"></span></span>
+                    <span class="cluppo-eye cluppo-eye--right"><span class="cluppo-pupil"></span></span>
+                </div>
+                <span class="cluppo-clip">📎</span>
+            </div>
+            <div class="cluppo-reveal__tagline">“I’m here to help!!”</div>
+        </div>
+    </div>
+
+    <div id="clippyTranscriptDrawer" class="clippy-transcript hidden" aria-label="Cluppo transcript drawer">
+        <div class="clippy-transcript__header">
+            <div>
+                <div class="clippy-transcript__title">Cluppo Transcript</div>
+                <div class="clippy-transcript__subtitle">A live log of his tantrums, edits, and grudges.</div>
+            </div>
+            <button class="clippy-btn" id="clippyTranscriptClose">Close</button>
+        </div>
+        <div class="clippy-transcript__log" id="clippyTranscriptLog"></div>
+        <div class="clippy-transcript__controls">
+            <div class="slider-group">
+                <div>
+                    <label for="clippyHostilitySlider">Hostility intensity</label>
+                    <input type="range" id="clippyHostilitySlider" min="0.5" max="2" step="0.1" value="1">
+                    <span id="clippyHostilityValue" class="slider-value">1.0x</span>
+                </div>
+            </div>
+            <div class="slider-group">
+                <div>
+                    <label for="clippySabotageSlider">Sabotage bias</label>
+                    <input type="range" id="clippySabotageSlider" min="0.5" max="2" step="0.1" value="1">
+                    <span id="clippySabotageValue" class="slider-value">1.0x</span>
+                </div>
+            </div>
+            <div class="slider-group">
+                <label for="clippyPersistMemoryToggle">
+                    <input type="checkbox" id="clippyPersistMemoryToggle">
+                    Persist memory across sessions <span class="experimental-badge">EXPERIMENTAL</span>
+                </label>
+                <div class="experimental-warning">⚠️ Enables cross-session grudge retention. Cluppo will remember everything forever.</div>
+            </div>
+            <div class="transcript-actions">
+                <button class="clippy-btn" id="clippyExportState">Export Haunting</button>
+                <button class="clippy-btn" id="clippyImportStateTrigger">Import Haunting</button>
+                <button class="clippy-btn" id="clippyClearTranscript">Clear Transcript</button>
+            </div>
+        </div>
+        <input type="file" id="clippyImportState" accept="application/json" class="hidden">
+    </div>
+
+    <!-- Hidden file input for loading documents -->
+    <input type="file" id="fileInput" accept=".html,.txt" style="display: none;">
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="js/editor.js"></script>
+    <script src="js/toolbar.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/export.js"></script>
+    <script src="js/cluppo-config.js"></script>
+    <script src="js/clippy.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
