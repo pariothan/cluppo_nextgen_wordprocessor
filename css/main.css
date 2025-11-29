@@ -1139,11 +1139,9 @@ body {
     font-size: 120px;
     margin: 20px 0;
     animation: cluppoPulse 1.4s ease-in-out infinite;
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
+    display: inline-block;
     position: relative;
+    padding-top: 22px;
 }
 
 @keyframes cluppoPulse {
@@ -1159,11 +1157,15 @@ body {
 }
 
 .cluppo-eyes {
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 12px;
-    margin-bottom: 8px;
+    z-index: 2;
 }
 
 .cluppo-eye {
@@ -1201,6 +1203,8 @@ body {
     font-size: 120px;
     filter: drop-shadow(0 0 20px rgba(255,255,255,0.5));
     display: block;
+    position: relative;
+    z-index: 1;
 }
 
 .clippy-transcript {
@@ -1345,6 +1349,16 @@ body {
     gap: 6px;
     justify-content: flex-end;
     flex-wrap: wrap;
+}
+
+.clippy-btn--danger {
+    background: linear-gradient(to bottom, #ffecec, #ffb3b3);
+    border-color: #fff #900 #900 #fff;
+    color: #900;
+}
+
+.clippy-btn--danger:hover {
+    background: linear-gradient(to bottom, #fff5f5, #ffcccc);
 }
 
 /* Utility Classes */

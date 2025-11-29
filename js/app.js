@@ -55,11 +55,20 @@ class WordProcessor {
         const fileDropdown = document.getElementById('fileDropdown');
         const editMenu = document.getElementById('editMenu');
         const editDropdown = document.getElementById('editDropdown');
+        const optionsMenu = document.getElementById('optionsMenu');
+        const optionsDropdown = document.getElementById('optionsDropdown');
+
+        const closeAllMenus = () => {
+            fileDropdown.classList.remove('active');
+            editDropdown.classList.remove('active');
+            if (optionsDropdown) optionsDropdown.classList.remove('active');
+        };
 
         // File menu toggle
         fileMenu.addEventListener('click', (e) => {
             e.stopPropagation();
             editDropdown.classList.remove('active');
+            if (optionsDropdown) optionsDropdown.classList.remove('active');
             fileDropdown.classList.toggle('active');
         });
 
@@ -67,13 +76,25 @@ class WordProcessor {
         editMenu.addEventListener('click', (e) => {
             e.stopPropagation();
             fileDropdown.classList.remove('active');
+            if (optionsDropdown) optionsDropdown.classList.remove('active');
             editDropdown.classList.toggle('active');
         });
 
+        if (optionsMenu && optionsDropdown) {
+            optionsMenu.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fileDropdown.classList.remove('active');
+                editDropdown.classList.remove('active');
+                const barRect = optionsMenu.parentElement.getBoundingClientRect();
+                const menuRect = optionsMenu.getBoundingClientRect();
+                optionsDropdown.style.left = `${menuRect.left - barRect.left}px`;
+                optionsDropdown.classList.toggle('active');
+            });
+        }
+
         // Close dropdowns when clicking outside
         document.addEventListener('click', () => {
-            fileDropdown.classList.remove('active');
-            editDropdown.classList.remove('active');
+            closeAllMenus();
         });
 
         // Prevent dropdown from closing when clicking inside
@@ -84,6 +105,16 @@ class WordProcessor {
         editDropdown.addEventListener('click', (e) => {
             e.stopPropagation();
         });
+
+        if (optionsDropdown) {
+            optionsDropdown.addEventListener('click', (e) => e.stopPropagation());
+            ['clippyExportState', 'clippyImportStateTrigger', 'clippyResetMemory', 'clippyClearTranscript'].forEach((id) => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.addEventListener('click', () => optionsDropdown.classList.remove('active'));
+                }
+            });
+        }
 
         // File menu items
         document.getElementById('newDoc').addEventListener('click', () => {

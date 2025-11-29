@@ -48,6 +48,7 @@ class ClippyAssistant {
         this.offlineBanner = null;
         this.offlineDismiss = null;
         this.persistMemoryToggle = null;
+        this.resetMemoryButton = null;
         this.selectionSnapshot = '';
         this.pendingSuggestion = null;
         this.disputedSuggestion = null;
@@ -125,6 +126,7 @@ class ClippyAssistant {
         this.offlineBanner = document.getElementById('clippyOfflineBanner');
         this.offlineDismiss = document.getElementById('offlineBannerDismiss');
         this.persistMemoryToggle = document.getElementById('clippyPersistMemoryToggle');
+        this.resetMemoryButton = document.getElementById('clippyResetMemory');
         this.sessionId = this.getSessionKey();
         this.loadState();
         this.loadVoices();
@@ -241,6 +243,9 @@ class ClippyAssistant {
         }
         if (this.clearTranscriptButton) {
             this.clearTranscriptButton.addEventListener('click', () => this.clearTranscript());
+        }
+        if (this.resetMemoryButton) {
+            this.resetMemoryButton.addEventListener('click', () => this.resetMemory());
         }
         if (this.offlineBanner && this.offlineDismiss) {
             this.offlineDismiss.addEventListener('click', () => this.hideOfflineBanner());
@@ -1468,24 +1473,45 @@ class ClippyAssistant {
         const list = lines || this.getEditorLines();
         console.log('[getActiveLineIndex] Total lines:', list.length, 'forceRandom:', forceRandom);
         if (!list.length) return null;
-        if (this.selectionLineIndex !== null && this.selectionLineIndex !== undefined) {
-            console.log('[getActiveLineIndex] Using cached selectionLineIndex:', this.selectionLineIndex);
-            return this.selectionLineIndex;
+        const isPlaceholderLine = (line) => {
+            const txt = (line?.text || '').trim().toLowerCase();
+            return txt.startsWith('start typing your document here');
+        };
+        const pickRandomIndex = () => {
+            const nonPlaceholder = list.filter(l => !isPlaceholderLine(l));
+            const pool = nonPlaceholder.length ? nonPlaceholder : list;
+            const chosen = pool[Math.floor(Math.random() * pool.length)];
+            const idx = chosen?.index ?? null;
+            this.selectionLineIndex = idx;
+            console.log('[getActiveLineIndex] Random index chosen:', idx, 'from non-placeholder pool:', !!nonPlaceholder.length);
+            return idx;
+        };
+        if (forceRandom) {
+            return pickRandomIndex();
         }
-        // If not forcing random, try to use the browser selection
-        if (!forceRandom) {
-            const idx = this.getSelectionLineIndex();
-            console.log('[getActiveLineIndex] getSelectionLineIndex returned:', idx);
-            if (idx !== null && idx !== undefined) {
-                this.selectionLineIndex = idx;
-                console.log('[getActiveLineIndex] Using selection-based index:', idx);
-                return idx;
+        if (this.selectionLineIndex !== null && this.selectionLineIndex !== undefined) {
+            const cached = list.find(l => l.index === this.selectionLineIndex) || list[this.selectionLineIndex];
+            if (cached && !isPlaceholderLine(cached)) {
+                console.log('[getActiveLineIndex] Using cached selectionLineIndex:', this.selectionLineIndex);
+                return this.selectionLineIndex;
+            }
+            if (list.some(l => !isPlaceholderLine(l))) {
+                console.log('[getActiveLineIndex] Cached index was placeholder; rerolling.');
+                this.selectionLineIndex = null;
+            } else {
+                console.log('[getActiveLineIndex] Only placeholder lines available; using cached index:', this.selectionLineIndex);
+                return this.selectionLineIndex;
             }
         }
-        const randomIdx = Math.floor(Math.random() * list.length);
-        this.selectionLineIndex = randomIdx;
-        console.log('[getActiveLineIndex] Generated random index:', randomIdx);
-        return randomIdx;
+        // If not forcing random, try to use the browser selection
+        const idx = this.getSelectionLineIndex();
+        console.log('[getActiveLineIndex] getSelectionLineIndex returned:', idx);
+        if (idx !== null && idx !== undefined) {
+            this.selectionLineIndex = idx;
+            console.log('[getActiveLineIndex] Using selection-based index:', idx);
+            return idx;
+        }
+        return pickRandomIndex();
     }
 
     getActiveLineText() {
@@ -1948,6 +1974,49 @@ class ClippyAssistant {
         this.saveState();
         this.updateEscalationVisuals();
         this.logTranscript('config', `Memory persistence ${enabled ? 'ENABLED' : 'DISABLED'} (experimental)`);
+    }
+
+    resetMemory() {
+        // Nuke stored state and start clean
+        try {
+            localStorage.removeItem(this.getSessionKey());
+            localStorage.removeItem(this.storageKeys.global);
+        } catch (e) {
+            // ignore storage issues
+        }
+
+        this.state = {
+            mood: 'neutral',
+            memories: [],
+            opinions: [],
+            lastUpdated: Date.now(),
+            escalationLevel: 0,
+            sabotageMeter: 0,
+            transcript: [],
+            personaOverrides: {
+                hostility: 1,
+                sabotage: 1
+            },
+            persistMemory: false
+        };
+        this.globalState = {
+            escalationLevel: 0,
+            memories: [],
+            opinions: []
+        };
+        this.selectionLineIndex = null;
+
+        if (this.persistMemoryToggle) {
+            this.persistMemoryToggle.checked = false;
+        }
+
+        this.applyMoodExpression();
+        this.updateSabotageMeter();
+        this.updatePersonaUIFromState();
+        this.updateTranscriptUI();
+        this.updateEscalationVisuals();
+        this.saveState();
+        this.logTranscript('config', 'Memory reset to factory settings.');
     }
 
     replaceElementTextPreservingFormat(element, newText) {

@@ -31,6 +31,7 @@
             <div class="menu-bar">
                 <div class="menu-item" id="fileMenu">File</div>
                 <div class="menu-item" id="editMenu">Edit</div>
+                <div class="menu-item" id="optionsMenu">Options</div>
                 <div class="menu-item">View</div>
                 <div class="menu-item">Help</div>
 
@@ -60,6 +61,15 @@
                     <div class="menu-separator"></div>
                     <button id="menuFind" class="menu-dropdown-item">Find...<span class="menu-shortcut">Ctrl+F</span></button>
                     <button id="menuReplace" class="menu-dropdown-item">Find and Replace...<span class="menu-shortcut">Ctrl+H</span></button>
+                </div>
+
+                <!-- Options Dropdown (Cluppo maintenance hidden in plain sight) -->
+                <div id="optionsDropdown" class="menu-dropdown">
+                    <button class="menu-dropdown-item" id="clippyExportState">Export Haunting</button>
+                    <button class="menu-dropdown-item" id="clippyImportStateTrigger">Import Haunting</button>
+                    <div class="menu-separator"></div>
+                    <button class="menu-dropdown-item" id="clippyResetMemory">Reset Memory</button>
+                    <button class="menu-dropdown-item" id="clippyClearTranscript">Clear Transcript</button>
                 </div>
             </div>
 
@@ -333,14 +343,9 @@
             <div class="slider-group">
                 <label for="clippyPersistMemoryToggle">
                     <input type="checkbox" id="clippyPersistMemoryToggle">
-                    Persist memory across sessions <span class="experimental-badge">EXPERIMENTAL</span>
+                    Persist memory locally across sessions <span class="experimental-badge">EXPERIMENTAL</span>
                 </label>
                 <div class="experimental-warning">⚠️ Enables cross-session grudge retention. Cluppo will remember everything forever.</div>
-            </div>
-            <div class="transcript-actions">
-                <button class="clippy-btn" id="clippyExportState">Export Haunting</button>
-                <button class="clippy-btn" id="clippyImportStateTrigger">Import Haunting</button>
-                <button class="clippy-btn" id="clippyClearTranscript">Clear Transcript</button>
             </div>
         </div>
         <input type="file" id="clippyImportState" accept="application/json" class="hidden">
